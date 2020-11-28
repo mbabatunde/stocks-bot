@@ -1,0 +1,8 @@
+{
+  "dependencies": {
+    "discord.js": "^12.5.1",
+    "eslint": "^7.14.0",
+    "node-fetch": "^2.6.1",
+    "stocks.js": "^0.0.19"
+  }
+}
