@@ -1,13 +1,19 @@
 // require the discord.js module
-const { prefix, token, stonks } = require('./config.json');
+const { prefix, token, stonks, finnhubAPI } = require('./config.json');
 const fetch = require('node-fetch');
 
 const Discord = require('discord.js');
+const finnhub = require('finnhub');
 const Stocks = require('stocks.js');
 
 // create a new Discord client
 const client = new Discord.Client();
 const stocks = new Stocks(stonks);
+
+// Finnhub API
+const api_key = finnhub.ApiClient.instance.authentications['api_key'];
+api_key.apiKey = finnhubAPI;
+const finnhubClient = new finnhub.DefaultApi();
 
 // when the client is ready, run this code
 // this event will only trigger one time after logging in
@@ -36,7 +42,10 @@ client.on('message', async (message) => {
 			message.channel.send(embed);
 		}
 		else {
+			// TODO: handle various arguments
+			// for basic stocks information
 			const ticker = args[1];
+
 			const result = await stocks.timeSeries({
 				symbol: ticker,
 				interval: '1min',
@@ -58,7 +67,15 @@ client.on('message', async (message) => {
 
 			message.reply(`$${ticker} Trading Info:\nOpening for $${ticker}: \`$${open}\`\nClosing for $${ticker}: \`$${close}\`\nHigh for $${ticker}: \`$${high}\`\nLow for $${ticker}:\`$${low}\``);
 
-			console.log(result[0]);
+			// TODO: Investigate this API further
+			finnhubClient.quote(ticker, (error, data) => {
+				console.log(data);
+				// const open = Number(data.o).toFixed(2);
+				// const high = Number(data.h).toFixed(2);
+				// const low = Number(data.l).toFixed(2);
+				// const current = Number(data.c).toFixed(2);
+				// message.reply(`\n\`$${ticker}\` Trading Info:\nCurrent: \`$${current}\`\nOpening: \`$${open}\`\nHigh: \`$${high}\`\nLow:\`$${low}\``);
+			});
 		}
 	}
 	else if (command === 'xkcd') {
