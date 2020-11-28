@@ -1,5 +1,6 @@
 // require the discord.js module
 const { prefix, token, stonks, finnhubAPI } = require('./config.json');
+const fs = require('fs');
 const fetch = require('node-fetch');
 
 const Discord = require('discord.js');
@@ -28,7 +29,6 @@ client.on('message', async (message) => {
 	const command = args.shift().toLowerCase();
 	// eslint-disable-next-line quotes
 	if (command === `stonks`) {
-		// message.channel.send('PLTR to the 🚀');
 		if (!args.length || args[0] === '-h') {
 			const embed = new Discord.MessageEmbed()
 				.setTitle('Welcome to the Stonks Bot!')
@@ -97,8 +97,41 @@ client.on('message', async (message) => {
 			})
 			.catch(err => { throw err; });
 	}
+	else if (command === 'smbc') {
+		console.log('hi');
+		// eslint-disable-next-line no-octal
+		const date = getDate(new Date(2002, 09, 05), new Date(2015, 03, 03));
+		const ye = new Intl.DateTimeFormat('en', { year: 'numeric' }).format(date);
+		const mo = new Intl.DateTimeFormat('en', { month: '2-digit' }).format(date);
+		const da = new Intl.DateTimeFormat('en', { day: '2-digit' }).format(date);
+		console.log(`${ye}-${mo}-${da}`);
+		const url = `https://www.smbc-comics.com/comics/${ye}${mo}${da}.gif`;
+		// fetch(url)
+		// 	.then(res => res.blob())
+		// 	.then(image => {
+		// 		// const test = URL.createObjectURL(image);
+		// 		console.log(image);
+		// 	});
+		console.log(url);
+		const response = await fetch(url);
+		const buffer = await response.buffer();
+		fs.writeFile('./image.gif', buffer, () => {
+			console.log('finished downloading!');
+		});
+
+		const embed = new Discord.MessageEmbed()
+			.setColor('#D3D3D3')
+			.attachFiles(['./image.gif'])
+			.setImage('attachment://image.gif')
+			.setTitle('SMBC Comic')
+			.setFooter(`Source: https://www.smbc-comics.com/comic/${ye}-${mo}-${da}`);
+		message.channel.send(embed);
+	}
 });
 
+function getDate(start, end) {
+	return new Date(start.getTime() + Math.random() * (end.getTime() - start.getTime()));
+}
 
 // login to Discord with your app's token
 client.login(token);
