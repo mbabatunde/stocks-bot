@@ -4,7 +4,11 @@
   "version": "0.0.0",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js"
+    "start": "pm2 start index.js --watch"
+  },
+  "engines": {
+    "node": "15.x",
+    "npm": "*"
   },
   "dependencies": {
     "algotrader": "^2.5.4",
