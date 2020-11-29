@@ -1,15 +1,20 @@
 // require the discord.js module
-const { prefix, token, stonks, finnhubAPI } = require('./config.json');
+const { prefix, token, stonks, finnhubAPI, iex } = require('./config.json');
 const fs = require('fs');
 const fetch = require('node-fetch');
 
 const Discord = require('discord.js');
 const finnhub = require('finnhub');
 const Stocks = require('stocks.js');
+const algotrader = require('algotrader');
 
 // create a new Discord client
 const client = new Discord.Client();
 const stocks = new Stocks(stonks);
+const Data = algotrader.Data;
+const Algorithm = algotrader.Algorithm;
+
+const IEX = Data.IEX;
 
 // Finnhub API
 const api_key = finnhub.ApiClient.instance.authentications['api_key'];
@@ -36,7 +41,7 @@ client.on('message', async (message) => {
 				.attachFiles(['./stonks.jpg'])
 				.setThumbnail('attachment://stonks.jpg')
 				.addFields(
-					{ name: 'List of commands', value: '`-s <STOCK>`\n`!xkcd`\n`-h`', inline: true },
+					{ name: 'List of commands', value: '`<STOCK>`\n`!xkcd`\n`-h`', inline: true },
 					{ name: 'Description', value: 'Shows stock information (opening, closing, high, and low of the underlying security)\nShows a random xkcd comic\nShows this embed', inline: true },
 				);
 			message.channel.send(embed);
@@ -44,37 +49,67 @@ client.on('message', async (message) => {
 		else {
 			// TODO: handle various arguments
 			// for basic stocks information
-			const ticker = args[1];
+			const ticker = args[0];
 
-			const result = await stocks.timeSeries({
-				symbol: ticker,
-				interval: '1min',
-			});
+			// const result = await stocks.timeSeries({
+			// 	symbol: ticker,
+			// 	interval: '1min',
+			// });
 
 			// eslint-disable-next-line no-unused-vars
-			const history = result.forEach(item => {
-				console.log(item.open);
-				console.log(item.close);
-				console.log(item.high);
-			});
+			// const history = result.forEach(item => {
+			// 	console.log(item.open);
+			// 	console.log(item.close);
+			// 	console.log(item.high);
+			// });
 
-			const open = Number(result[0].open).toFixed(2);
-			const close = Number(result[0].close).toFixed(2);
-			const high = Number(result[0].high).toFixed(2);
-			const low = Number(result[0].low).toFixed(2);
+			// const open = Number(result[0].open).toFixed(2);
+			// const close = Number(result[0].close).toFixed(2);
+			// const high = Number(result[0].high).toFixed(2);
+			// const low = Number(result[0].low).toFixed(2);
 
-			console.log(typeof (open));
+			// console.log(typeof (open));
 
-			message.reply(`$${ticker} Trading Info:\nOpening for $${ticker}: \`$${open}\`\nClosing for $${ticker}: \`$${close}\`\nHigh for $${ticker}: \`$${high}\`\nLow for $${ticker}:\`$${low}\``);
+			// message.reply(`$${ticker} Trading Info:\nOpening for $${ticker}: \`$${open}\`\nClosing for $${ticker}: \`$${close}\`\nHigh for $${ticker}: \`$${high}\`\nLow for $${ticker}:\`$${low}\``);
 
 			// TODO: Investigate this API further
 			finnhubClient.quote(ticker, (error, data) => {
 				console.log(data);
-				// const open = Number(data.o).toFixed(2);
-				// const high = Number(data.h).toFixed(2);
-				// const low = Number(data.l).toFixed(2);
-				// const current = Number(data.c).toFixed(2);
-				// message.reply(`\n\`$${ticker}\` Trading Info:\nCurrent: \`$${current}\`\nOpening: \`$${open}\`\nHigh: \`$${high}\`\nLow:\`$${low}\``);
+			});
+
+			IEX.getQuote(ticker).then(quote => {
+				console.log('IEX');
+
+				const res = quote.price;
+
+				const open = Number(res.open).toFixed(2);
+				const high = Number(res.high).toFixed(2);
+				const low = Number(res.low).toFixed(2);
+				const current = Number(res.last).toFixed(2);
+
+				const url = `https://cloud.iexapis.com/v1/stock/${ticker}/logo?token=${iex}`;
+				fetch(url, {
+					headers: {
+						method: 'GET',
+						'Content-Type': 'application/json',
+					},
+				}).then(resp => {
+					if (resp.ok) {
+						resp.json().then(json => {
+							const imageURL = json.url;
+							const embed = new Discord.MessageEmbed()
+								.setTitle(`$${ticker} Info`)
+							// .attachFiles(['./stonks.jpg'])
+								.setThumbnail(imageURL)
+								.addFields(
+									{ name: 'Price Info', value: '**Current:**\nOpened:\nHigh:\nLow:\n', inline: true },
+									{ name: 'Description', value: `\`$${current}\`\n\`$${open}\`\n\`$${high}\`\n\`$${low}\``, inline: true },
+								);
+							message.reply(embed);
+						});
+					}
+				});
+
 			});
 		}
 	}
