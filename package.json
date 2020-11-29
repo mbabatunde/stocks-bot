@@ -4,7 +4,7 @@
   "version": "0.0.0",
   "main": "index.js",
   "scripts": {
-    "start": "pm2 start index.js --watch"
+    "start": "node index.js"
   },
   "engines": {
     "node": "15.x"
