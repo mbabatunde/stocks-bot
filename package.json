@@ -8,7 +8,7 @@
   },
   "engines": {
     "node": "15.x",
-    "npm": "*"
+    "npm": "7.x"
   },
   "dependencies": {
     "algotrader": "^2.5.4",
