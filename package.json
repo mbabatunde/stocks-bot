@@ -7,8 +7,7 @@
     "start": "pm2 start index.js --watch"
   },
   "engines": {
-    "node": "15.x",
-    "npm": "7.x"
+    "node": "15.x"
   },
   "dependencies": {
     "algotrader": "^2.5.4",
