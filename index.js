@@ -42,7 +42,7 @@ client.on('message', async (message) => {
 				.attachFiles(['./stonks.jpg'])
 				.setThumbnail('attachment://stonks.jpg')
 				.addFields(
-					{ name: '`!stonks <STOCKS>`', value: 'Shows stock information (opening, closing, high, and low of an underlying security)' },
+					{ name: '`!stonks <STOCK>`', value: 'Shows stock information (opening, closing, high, and low of an underlying security)' },
 					{ name: '`!stonks -h | -help`', value: 'Brings you this embed' },
 					{ name: '`!xkcd`', value: 'Shows a random xkcd comic' },
 					{ name: '`!smbc`', value: 'Shows a random SMBC comic' },
