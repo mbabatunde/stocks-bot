@@ -98,12 +98,18 @@ client.on('message', async (message) => {
 						resp.json().then(json => {
 							const imageURL = json.url;
 							const embed = new Discord.MessageEmbed()
+								.setColor('#D3D3D3')
 								.setTitle(`$${ticker} Info`)
 							// .attachFiles(['./stonks.jpg'])
 								.setThumbnail(imageURL)
 								.addFields(
-									{ name: 'Price Info', value: '**Current:**\nOpened:\nHigh:\nLow:\n', inline: true },
-									{ name: 'Description', value: `\`$${current}\`\n\`$${open}\`\n\`$${high}\`\n\`$${low}\``, inline: true },
+									// { name: 'Price Info', value: '**Current:**\nOpened:\nHigh:\nLow:\n', inline: true },
+									// { name: 'Description', value: `\`$${current}\`\n\`$${open}\`\n\`$${high}\`\n\`$${low}\``, inline: true },
+									{ name: 'Company Name', value: '**TODO**' },
+									{ name: 'Current', value: `**$${current}**`, inline: true },
+									{ name: 'Opening', value: `**$${open}**`, inline: true },
+									{ name: 'High', value: `**$${high}**`, inline: true },
+									{ name: 'Low', value: `**$${low}**`, inline: true },
 								);
 							message.reply(embed);
 						});
