@@ -34,15 +34,15 @@ client.on('message', async (message) => {
 	const command = args.shift().toLowerCase();
 	// eslint-disable-next-line quotes
 	if (command === `stonks`) {
-		if (!args.length || args[0] === '-h') {
+		if (!args.length || args[0] === '-h' || args[0] === '-help') {
 			const embed = new Discord.MessageEmbed()
 				.setTitle('Welcome to the Stonks Bot!')
 				.setDescription('This bot will give you some information about a stock, some memes, and more!')
 				.attachFiles(['./stonks.jpg'])
 				.setThumbnail('attachment://stonks.jpg')
 				.addFields(
-					{ name: 'List of commands', value: '`<STOCK>`\n`!xkcd`\n`-h`', inline: true },
-					{ name: 'Description', value: 'Shows stock information (opening, closing, high, and low of the underlying security)\nShows a random xkcd comic\nShows this embed', inline: true },
+					{ name: 'List of commands', value: '`<STOCK>`\n`!xkcd`\n`-h | -help`', inline: true },
+					{ name: 'Description', value: 'Shows stock information (opening, closing, high, and low of an underlying security)\nShows a random xkcd comic\nShows this embed', inline: true },
 				);
 			message.channel.send(embed);
 		}
@@ -79,13 +79,13 @@ client.on('message', async (message) => {
 
 			IEX.getQuote(ticker).then(quote => {
 				console.log('IEX');
-
+				console.log(quote.price);
 				const res = quote.price;
 
-				const open = Number(res.open).toFixed(2);
-				const high = Number(res.high).toFixed(2);
-				const low = Number(res.low).toFixed(2);
-				const current = Number(res.last).toFixed(2);
+				const open = thousands_separators(Number(res.open).toFixed(2));
+				const high = thousands_separators(Number(res.high).toFixed(2));
+				const low = thousands_separators(Number(res.low).toFixed(2));
+				const current = thousands_separators(Number(res.last).toFixed(2));
 
 				const url = `https://cloud.iexapis.com/v1/stock/${ticker}/logo?token=${iex}`;
 				fetch(url, {
@@ -166,6 +166,13 @@ client.on('message', async (message) => {
 
 function getDate(start, end) {
 	return new Date(start.getTime() + Math.random() * (end.getTime() - start.getTime()));
+}
+
+// Courtesy of w3: https://www.w3resource.com/javascript-exercises/javascript-math-exercise-39.php
+function thousands_separators(num) {
+	const num_parts = num.toString().split('.');
+	num_parts[0] = num_parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+	return num_parts.join('.');
 }
 
 // login to Discord with your app's token
