@@ -41,8 +41,10 @@ client.on('message', async (message) => {
 				.attachFiles(['./stonks.jpg'])
 				.setThumbnail('attachment://stonks.jpg')
 				.addFields(
-					{ name: 'List of commands', value: '`<STOCK>`\n`!xkcd`\n`-h | -help`', inline: true },
-					{ name: 'Description', value: 'Shows stock information (opening, closing, high, and low of an underlying security)\nShows a random xkcd comic\nShows this embed', inline: true },
+					{ name: '`!stonks <STOCKS>`', value: 'Shows stock information (opening, closing, high, and low of an underlying security)' },
+					{ name: '`!stonks -h | -help`', value: 'Brings you this embed' },
+					{ name: '`!xkcd`', value: 'Shows a random xkcd comic' },
+					{ name: '`!smbc`', value: 'Shows a random SMBC comic' },
 				);
 			message.channel.send(embed);
 		}
@@ -54,13 +56,14 @@ client.on('message', async (message) => {
 			// const result = await stocks.timeSeries({
 			// 	symbol: ticker,
 			// 	interval: '1min',
+			// 	amount: 1,
 			// });
 
-			// eslint-disable-next-line no-unused-vars
+			// // eslint-disable-next-line no-unused-vars
 			// const history = result.forEach(item => {
-			// 	console.log(item.open);
-			// 	console.log(item.close);
-			// 	console.log(item.high);
+			// 	// console.log(item.open);
+			// 	// console.log(item.close);
+			// 	// console.log(item.high);
 			// });
 
 			// const open = Number(result[0].open).toFixed(2);
@@ -75,18 +78,10 @@ client.on('message', async (message) => {
 			// TODO: Investigate this API further
 			finnhubClient.quote(ticker, (error, data) => {
 				console.log(data);
-			});
-
-			IEX.getQuote(ticker).then(quote => {
-				console.log('IEX');
-				console.log(quote.price);
-				const res = quote.price;
-
-				const open = thousands_separators(Number(res.open).toFixed(2));
-				const high = thousands_separators(Number(res.high).toFixed(2));
-				const low = thousands_separators(Number(res.low).toFixed(2));
-				const current = thousands_separators(Number(res.last).toFixed(2));
-
+				const open = thousands_separators(Number(data.o).toFixed(2));
+				const high = thousands_separators(Number(data.h).toFixed(2));
+				const low = thousands_separators(Number(data.l).toFixed(2));
+				const current = thousands_separators(Number(data.c).toFixed(2));
 				const url = `https://cloud.iexapis.com/v1/stock/${ticker}/logo?token=${iex}`;
 				fetch(url, {
 					headers: {
@@ -103,8 +98,8 @@ client.on('message', async (message) => {
 							// .attachFiles(['./stonks.jpg'])
 								.setThumbnail(imageURL)
 								.addFields(
-									// { name: 'Price Info', value: '**Current:**\nOpened:\nHigh:\nLow:\n', inline: true },
-									// { name: 'Description', value: `\`$${current}\`\n\`$${open}\`\n\`$${high}\`\n\`$${low}\``, inline: true },
+								// { name: 'Price Info', value: '**Current:**\nOpened:\nHigh:\nLow:\n', inline: true },
+								// { name: 'Description', value: `\`$${current}\`\n\`$${open}\`\n\`$${high}\`\n\`$${low}\``, inline: true },
 									{ name: 'Company Name', value: '**TODO**' },
 									{ name: 'Current', value: `**$${current}**`, inline: true },
 									{ name: 'Opening', value: `**$${open}**`, inline: true },
@@ -115,8 +110,47 @@ client.on('message', async (message) => {
 						});
 					}
 				});
-
 			});
+
+			// IEX.getQuote(ticker).then(quote => {
+			// console.log('IEX');
+			// console.log(quote.price);
+			// const res = quote.price;
+
+			// const open = thousands_separators(Number(res.open).toFixed(2));
+			// const high = thousands_separators(Number(res.high).toFixed(2));
+			// const low = thousands_separators(Number(res.low).toFixed(2));
+			// const current = thousands_separators(Number(res.last).toFixed(2));
+
+			// const url = `https://cloud.iexapis.com/v1/stock/${ticker}/logo?token=${iex}`;
+			// fetch(url, {
+			// 	headers: {
+			// 		method: 'GET',
+			// 		'Content-Type': 'application/json',
+			// 	},
+			// }).then(resp => {
+			// 	if (resp.ok) {
+			// 		resp.json().then(json => {
+			// 			const imageURL = json.url;
+			// 			const embed = new Discord.MessageEmbed()
+			// 				.setColor('#D3D3D3')
+			// 				.setTitle(`$${ticker} Info`)
+			// 				// .attachFiles(['./stonks.jpg'])
+			// 				.setThumbnail(imageURL)
+			// 				.addFields(
+			// 					// { name: 'Price Info', value: '**Current:**\nOpened:\nHigh:\nLow:\n', inline: true },
+			// 					// { name: 'Description', value: `\`$${current}\`\n\`$${open}\`\n\`$${high}\`\n\`$${low}\``, inline: true },
+			// 					{ name: 'Company Name', value: '**TODO**' },
+			// 					{ name: 'Current', value: `**$${close}**`, inline: true },
+			// 					{ name: 'Opening', value: `**$${open}**`, inline: true },
+			// 					{ name: 'High', value: `**$${high}**`, inline: true },
+			// 					{ name: 'Low', value: `**$${low}**`, inline: true },
+			// 				);
+			// 			message.reply(embed);
+			// 		});
+			// 	}
+			// });
+			// });
 		}
 	}
 	else if (command === 'xkcd') {
