@@ -34,6 +34,7 @@ client.on('message', async (message) => {
 	const command = args.shift().toLowerCase();
 	// eslint-disable-next-line quotes
 	if (command === `stonks`) {
+		console.log('getting here!');
 		if (!args.length || args[0] === '-h' || args[0] === '-help') {
 			const embed = new Discord.MessageEmbed()
 				.setTitle('Welcome to the Stonks Bot!')
