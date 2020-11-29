@@ -1,5 +1,5 @@
 // require the discord.js module
-const { prefix, token, stonks, finnhubAPI, iex } = require('./config.json');
+require('dotenv').config();
 const fs = require('fs');
 const fetch = require('node-fetch');
 
@@ -10,7 +10,7 @@ const algotrader = require('algotrader');
 
 // create a new Discord client
 const client = new Discord.Client();
-const stocks = new Stocks(stonks);
+const stocks = new Stocks(process.env.STONKS);
 const Data = algotrader.Data;
 const Algorithm = algotrader.Algorithm;
 
@@ -18,7 +18,7 @@ const IEX = Data.IEX;
 
 // Finnhub API
 const api_key = finnhub.ApiClient.instance.authentications['api_key'];
-api_key.apiKey = finnhubAPI;
+api_key.apiKey = process.env.FINNHUB;
 const finnhubClient = new finnhub.DefaultApi();
 
 // when the client is ready, run this code
@@ -30,7 +30,7 @@ client.once('ready', () => {
 
 client.on('message', async (message) => {
 	if (message.author.bot) return;
-	const args = message.content.slice(prefix.length).trim().split(' ');
+	const args = message.content.slice(process.env.PREFIX.length).trim().split(' ');
 	const command = args.shift().toLowerCase();
 	// eslint-disable-next-line quotes
 	if (command === `stonks`) {
@@ -82,7 +82,7 @@ client.on('message', async (message) => {
 				const high = thousands_separators(Number(data.h).toFixed(2));
 				const low = thousands_separators(Number(data.l).toFixed(2));
 				const current = thousands_separators(Number(data.c).toFixed(2));
-				const url = `https://cloud.iexapis.com/v1/stock/${ticker}/logo?token=${iex}`;
+				const url = `https://cloud.iexapis.com/v1/stock/${ticker}/logo?token=${process.env.IEX}`;
 				fetch(url, {
 					headers: {
 						method: 'GET',
@@ -216,4 +216,4 @@ function thousands_separators(num) {
 }
 
 // login to Discord with your app's token
-client.login(token);
+client.login();

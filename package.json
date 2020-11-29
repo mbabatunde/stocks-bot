@@ -1,5 +1,5 @@
 {
-  "name": "Stonks Bot",
+  "name": "stonks-bot",
   "Description": "Getting stock information, news, memes, and more",
   "version": "0.0.0",
   "main": "index.js",
@@ -9,6 +9,7 @@
   "dependencies": {
     "algotrader": "^2.5.4",
     "discord.js": "^12.5.1",
+    "dotenv": "^8.2.0",
     "eslint": "^7.14.0",
     "finnhub": "^1.2.1",
     "node-fetch": "^2.6.1",
