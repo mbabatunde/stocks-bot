@@ -25,6 +25,7 @@ const finnhubClient = new finnhub.DefaultApi();
 // this event will only trigger one time after logging in
 client.once('ready', () => {
 	console.log('ready!');
+	client.user.setActivity('PLTR 🚀🌕', { type: 'WATCHING' });
 });
 
 
