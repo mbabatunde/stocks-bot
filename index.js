@@ -102,7 +102,6 @@ client.on('message', async (message) => {
 								.addFields(
 								// { name: 'Price Info', value: '**Current:**\nOpened:\nHigh:\nLow:\n', inline: true },
 								// { name: 'Description', value: `\`$${current}\`\n\`$${open}\`\n\`$${high}\`\n\`$${low}\``, inline: true },
-									{ name: 'Company Name', value: '**TODO**' },
 									{ name: 'Current', value: `**$${current}**`, inline: true },
 									{ name: 'Opening', value: `**$${open}**`, inline: true },
 									{ name: 'High', value: `**$${high}**`, inline: true },
