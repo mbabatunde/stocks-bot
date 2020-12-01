@@ -78,49 +78,49 @@ client.on('message', async (message) => {
 
 			// TODO: Investigate this API further
 			finnhubClient.quote(ticker, (error, data) => {
-				let info = null;
-				if (data !== null) {
-					info = data;
-					console.log(info);
-				}
-				console.log(info.h);
-				const open = thousands_separators(Number(info.o).toFixed(2));
-				const high = thousands_separators(Number(info.h).toFixed(2));
-				const low = thousands_separators(Number(info.l).toFixed(2));
-				const current = thousands_separators(Number(info.c).toFixed(2));
-				// What it previously closed
-				const prev = thousands_separators(Number(info.pc).toFixed(2));
-				const percentage = stockPercentage(current, prev);
+				console.log(data);
+				if (data) {
+					const open = thousands_separators(Number(data.o).toFixed(2));
+					const high = thousands_separators(Number(data.h).toFixed(2));
+					const low = thousands_separators(Number(data.l).toFixed(2));
+					const current = thousands_separators(Number(data.c).toFixed(2));
+					// What it previously closed
+					const prev = thousands_separators(Number(data.pc).toFixed(2));
+					const percentage = stockPercentage(current, prev);
 
-				const url = `https://cloud.iexapis.com/v1/stock/${ticker}/logo?token=${process.env.IEX}`;
-				fetch(url, {
-					headers: {
-						method: 'GET',
-						'Content-Type': 'application/json',
-					},
-				}).then(resp => {
-					if (resp.ok) {
-						resp.json().then(json => {
-							const imageURL = json.url;
-							const embed = new Discord.MessageEmbed()
-								.setColor('#D3D3D3')
-								.setTitle(`$${ticker} Info`)
-							// .attachFiles(['./stonks.jpg'])
-								.setThumbnail(imageURL)
-								.addFields(
-								// { name: 'Price Info', value: '**Current:**\nOpened:\nHigh:\nLow:\n', inline: true },
-								// { name: 'Description', value: `\`$${current}\`\n\`$${open}\`\n\`$${high}\`\n\`$${low}\``, inline: true },
-									{ name: 'Current', value: `**$${current}**`, inline: true },
-									{ name: 'Trend', value: `${percentage}`, inline: true },
-									{ name: 'Opening', value: `**$${open}**`, inline: true },
-									{ name: 'High', value: `**$${high}**`, inline: true },
-									{ name: 'Low', value: `**$${low}**`, inline: true },
-									{ name: 'Previously Closed', value: `**$${prev}**`, inline: true },
-								);
-							message.channel.send(embed);
-						});
-					}
-				});
+					const url = `https://cloud.iexapis.com/v1/stock/${ticker}/logo?token=${process.env.IEX}`;
+					fetch(url, {
+						headers: {
+							method: 'GET',
+							'Content-Type': 'application/json',
+						},
+					}).then(resp => {
+						if (resp.ok) {
+							resp.json().then(json => {
+								const imageURL = json.url;
+								const embed = new Discord.MessageEmbed()
+									.setColor('#D3D3D3')
+									.setTitle(`$${ticker} Info`)
+								// .attachFiles(['./stonks.jpg'])
+									.setThumbnail(imageURL)
+									.addFields(
+										// { name: 'Price Info', value: '**Current:**\nOpened:\nHigh:\nLow:\n', inline: true },
+										// { name: 'Description', value: `\`$${current}\`\n\`$${open}\`\n\`$${high}\`\n\`$${low}\``, inline: true },
+										{ name: 'Current', value: `**$${current}**`, inline: true },
+										{ name: 'Trend', value: `${percentage}`, inline: true },
+										{ name: 'Opening', value: `**$${open}**`, inline: true },
+										{ name: 'High', value: `**$${high}**`, inline: true },
+										{ name: 'Low', value: `**$${low}**`, inline: true },
+										{ name: 'Previously Closed', value: `**$${prev}**`, inline: true },
+									);
+								message.channel.send(embed);
+							});
+						}
+					});
+				}
+				else {
+					message.channel.send('Finnhub API is not working correctly at this time');
+				}
 			});
 
 			// IEX.getQuote(ticker).then(quote => {
