@@ -35,7 +35,6 @@ client.on('message', async (message) => {
 	const command = args.shift().toLowerCase();
 	// eslint-disable-next-line quotes
 	if (command === `stonks`) {
-		console.log('getting here!');
 		if (!args.length || args[0] === '-h' || args[0] === '-help') {
 			const embed = new Discord.MessageEmbed()
 				.setTitle('Welcome to the Stonks Bot!')
@@ -79,11 +78,20 @@ client.on('message', async (message) => {
 
 			// TODO: Investigate this API further
 			finnhubClient.quote(ticker, (error, data) => {
-				console.log(data);
-				const open = thousands_separators(Number(data.o).toFixed(2));
-				const high = thousands_separators(Number(data.h).toFixed(2));
-				const low = thousands_separators(Number(data.l).toFixed(2));
-				const current = thousands_separators(Number(data.c).toFixed(2));
+				let info = null;
+				if (data !== null) {
+					info = data;
+					console.log(info);
+				}
+				console.log(info.h);
+				const open = thousands_separators(Number(info.o).toFixed(2));
+				const high = thousands_separators(Number(info.h).toFixed(2));
+				const low = thousands_separators(Number(info.l).toFixed(2));
+				const current = thousands_separators(Number(info.c).toFixed(2));
+				// What it previously closed
+				const prev = thousands_separators(Number(info.pc).toFixed(2));
+				const percentage = stockPercentage(current, prev);
+
 				const url = `https://cloud.iexapis.com/v1/stock/${ticker}/logo?token=${process.env.IEX}`;
 				fetch(url, {
 					headers: {
@@ -103,11 +111,13 @@ client.on('message', async (message) => {
 								// { name: 'Price Info', value: '**Current:**\nOpened:\nHigh:\nLow:\n', inline: true },
 								// { name: 'Description', value: `\`$${current}\`\n\`$${open}\`\n\`$${high}\`\n\`$${low}\``, inline: true },
 									{ name: 'Current', value: `**$${current}**`, inline: true },
+									{ name: 'Trend', value: `${percentage}`, inline: true },
 									{ name: 'Opening', value: `**$${open}**`, inline: true },
 									{ name: 'High', value: `**$${high}**`, inline: true },
 									{ name: 'Low', value: `**$${low}**`, inline: true },
+									{ name: 'Previously Closed', value: `**$${prev}**`, inline: true },
 								);
-							message.reply(embed);
+							message.channel.send(embed);
 						});
 					}
 				});
@@ -203,6 +213,21 @@ client.on('message', async (message) => {
 			.setFooter(`Source: https://www.smbc-comics.com/comic/${ye}-${mo}-${da}`);
 		message.channel.send(embed);
 	}
+	else if (command === 'autist' | command === 'wsb') {
+		const embed = new Discord.MessageEmbed()
+			.setColor('#e63946')
+			.attachFiles(['./wsbmascot.gif'])
+			.setImage('attachment://wsbmascot.gif')
+			.setTitle('You browse WSB and gamble?')
+			.setDescription('Congrats you\'re an autist like the rest of WSB!')
+			// eslint-disable-next-line quotes
+			.setFooter(`Remember: $PLTR and other tech IPOs are the way (Not financial advice - **SEC nearby**)`);
+		if (args[1]) {
+			const user = getUserFromMention(args[1]);
+			return message.channel.send(`${user.tag}: ${embed}`);
+		}
+		return message.reply(embed);
+	}
 });
 
 function getDate(start, end) {
@@ -214,6 +239,26 @@ function thousands_separators(num) {
 	const num_parts = num.toString().split('.');
 	num_parts[0] = num_parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 	return num_parts.join('.');
+}
+
+function stockPercentage(closed, prev) {
+	const change = Number(((closed - prev) / prev) * 100).floor().toFixed(2);
+	return change < 0 ? `📉${change}%` : `📈${change}%`;
+}
+
+// Discord.js documentation code
+function getUserFromMention(mention) {
+	if (!mention) return;
+
+	if (mention.startsWith('<@') && mention.endsWith('>')) {
+		mention = mention.slice(2, -1);
+
+		if (mention.startsWith('!')) {
+			mention = mention.slice(1);
+		}
+
+		return client.users.cache.get(mention);
+	}
 }
 
 // login to Discord with your app's token
