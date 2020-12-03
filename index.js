@@ -248,10 +248,7 @@ function thousands_separators(num) {
 }
 
 function stockPercentage(closed, prev) {
-	console.log(closed);
-	console.log(prev);
 	const change = Number(((closed - prev) / prev) * 100).toFixed(2);
-	console.log(change);
 	return change < 0 ? `📉${change}%` : `📈${change}%`;
 }
 
