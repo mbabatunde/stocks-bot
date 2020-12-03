@@ -113,12 +113,18 @@ client.on('message', async (message) => {
 									.addFields(
 										// { name: 'Price Info', value: '**Current:**\nOpened:\nHigh:\nLow:\n', inline: true },
 										// { name: 'Description', value: `\`$${current}\`\n\`$${open}\`\n\`$${high}\`\n\`$${low}\``, inline: true },
-										{ name: 'Current', value: `**$${current}**`, inline: true },
-										{ name: 'Trend', value: `**${percentage}**`, inline: true },
-										{ name: 'Opening', value: `**$${open}**`, inline: true },
-										{ name: 'High', value: `**$${high}**`, inline: true },
-										{ name: 'Low', value: `**$${low}**`, inline: true },
-										{ name: 'Previously Closed', value: `**$${prev}**`, inline: true },
+										// eslint-disable-next-line quotes
+										{ name: `__Current__`, value: `**$${current}**`, inline: true },
+										// eslint-disable-next-line quotes
+										{ name: `__Trend__`, value: `**${percentage}**`, inline: true },
+										// eslint-disable-next-line quotes
+										{ name: `__Opening__`, value: `**$${open}**`, inline: true },
+										// eslint-disable-next-line quotes
+										{ name: `__High__`, value: `**$${high}**`, inline: true },
+										// eslint-disable-next-line quotes
+										{ name: `__Low__`, value: `**$${low}**`, inline: true },
+										// eslint-disable-next-line quotes
+										{ name: `__Previously Closed__`, value: `**$${prev}**`, inline: true },
 									);
 								message.channel.send(embed);
 							});
