@@ -77,15 +77,14 @@ client.on('message', async (message) => {
 			// message.reply(`$${ticker} Trading Info:\nOpening for $${ticker}: \`$${open}\`\nClosing for $${ticker}: \`$${close}\`\nHigh for $${ticker}: \`$${high}\`\nLow for $${ticker}:\`$${low}\``);
 
 			// TODO: Investigate this API further
-			finnhubClient.quote(ticker, (error, data) => {
-				console.log(data);
-				if (data) {
-					const open = thousands_separators(Number(data.o).toFixed(2));
-					const high = thousands_separators(Number(data.h).toFixed(2));
-					const low = thousands_separators(Number(data.l).toFixed(2));
-					const current = thousands_separators(Number(data.c).toFixed(2));
+			finnhubClient.quote(ticker, (error, data, response) => {
+				if (response.text) {
+					let open = Number(JSON.parse(response.text).o).toFixed(2);
+					let high = Number(JSON.parse(response.text).h).toFixed(2);
+					let low = Number(JSON.parse(response.text).l).toFixed(2);
+					let current = Number(JSON.parse(response.text).c).toFixed(2);
 					// What it previously closed
-					const prev = thousands_separators(Number(data.pc).toFixed(2));
+					let prev = Number(JSON.parse(response.text).pc).toFixed(2);
 					const percentage = stockPercentage(current, prev);
 
 					const url = `https://cloud.iexapis.com/v1/stock/${ticker}/logo?token=${process.env.IEX}`;
@@ -98,6 +97,13 @@ client.on('message', async (message) => {
 						if (resp.ok) {
 							resp.json().then(json => {
 								const imageURL = json.url;
+
+								open = thousands_separators(open);
+								high = thousands_separators(high);
+								low = thousands_separators(low);
+								current = thousands_separators(current);
+								prev = thousands_separators(prev);
+
 								const embed = new Discord.MessageEmbed()
 									.setColor('#D3D3D3')
 									.setTitle(`$${ticker} Info`)
@@ -107,7 +113,7 @@ client.on('message', async (message) => {
 										// { name: 'Price Info', value: '**Current:**\nOpened:\nHigh:\nLow:\n', inline: true },
 										// { name: 'Description', value: `\`$${current}\`\n\`$${open}\`\n\`$${high}\`\n\`$${low}\``, inline: true },
 										{ name: 'Current', value: `**$${current}**`, inline: true },
-										{ name: 'Trend', value: `${percentage}`, inline: true },
+										{ name: 'Trend', value: `**${percentage}**`, inline: true },
 										{ name: 'Opening', value: `**$${open}**`, inline: true },
 										{ name: 'High', value: `**$${high}**`, inline: true },
 										{ name: 'Low', value: `**$${low}**`, inline: true },
@@ -242,7 +248,10 @@ function thousands_separators(num) {
 }
 
 function stockPercentage(closed, prev) {
-	const change = Number(((closed - prev) / prev) * 100).floor().toFixed(2);
+	console.log(closed);
+	console.log(prev);
+	const change = Number(((closed - prev) / prev) * 100).toFixed(2);
+	console.log(change);
 	return change < 0 ? `📉${change}%` : `📈${change}%`;
 }
 
