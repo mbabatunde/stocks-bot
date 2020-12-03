@@ -249,7 +249,7 @@ function thousands_separators(num) {
 
 function stockPercentage(closed, prev) {
 	const change = Number(((closed - prev) / prev) * 100).toFixed(2);
-	return change < 0 ? `📉 ${change}%` : `📈 ${change}%`;
+	return change < 0 ? `📉 ${change}%` : `📈 +${change}%`;
 }
 
 // Discord.js documentation code
