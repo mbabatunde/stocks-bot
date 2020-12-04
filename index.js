@@ -270,7 +270,7 @@ client.on('message', async (message) => {
 				.setImage(item.url_overridden_by_dest)
 				.setTitle(item.subreddit_name_prefixed + ': ' + item.title)
 				.setDescription('Score: ' + item.score + '\n' + item.link_flair_text)
-				.setURL('https://old.reddit.com' + item.permalink)
+				.setURL('https://reddit.com' + item.permalink)
 				.setFooter('Courtesy of u/' + item.author.name);
 			message.channel.send(embed);
 		}
