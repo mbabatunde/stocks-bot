@@ -7,6 +7,7 @@ const Discord = require('discord.js');
 const finnhub = require('finnhub');
 const Stocks = require('stocks.js');
 const algotrader = require('algotrader');
+const snoowrap = require('snoowrap');
 
 // create a new Discord client
 const client = new Discord.Client();
@@ -20,6 +21,15 @@ const IEX = Data.IEX;
 const api_key = finnhub.ApiClient.instance.authentications['api_key'];
 api_key.apiKey = process.env.FINNHUB;
 const finnhubClient = new finnhub.DefaultApi();
+
+// Reddit API
+const r = new snoowrap({
+	userAgent: 'discord-bot',
+	clientId: process.env.REDDITCLIENTID,
+	clientSecret: process.env.REDDITCLIENTSECRET,
+	username: process.env.REDDITUSERNAME,
+	password: process.env.REDDITPASSWORD,
+});
 
 // when the client is ready, run this code
 // this event will only trigger one time after logging in
@@ -46,6 +56,8 @@ client.on('message', async (message) => {
 					{ name: '`!stonks -h | -help`', value: 'Brings you this embed' },
 					{ name: '`!xkcd`', value: 'Shows a random xkcd comic' },
 					{ name: '`!smbc`', value: 'Shows a random SMBC comic' },
+					{ name: '`!reddit <SUBREDDIT>`', value: 'Gives a random top 25 post from a particular subreddit (dankmemes, funny, prequelmemes, etc.)' },
+					{ name: '`!wsb` ', value: 'WSB reminder' },
 				);
 			message.channel.send(embed);
 		}
@@ -241,6 +253,31 @@ client.on('message', async (message) => {
 		}
 		return message.reply(embed);
 	}
+	else if (command === 'reddit') {
+		const sub = args[0];
+		const topRes = await r.getSubreddit(sub).getTop({ time: 'day' });
+		if (topRes) {
+			const randomNumber = getRandomInt(0, 24);
+			const item = topRes[randomNumber];
+			console.log(item.permalink);
+			console.log(item.author.name);
+			item.score = thousands_separators(item.score);
+			if (!item.link_flair_text) {
+				item.link_flair_text = 'No link flair for this post';
+			}
+			const embed = new Discord.MessageEmbed()
+				.setColor('#e63946')
+				.setImage(item.url_overridden_by_dest)
+				.setTitle(item.subreddit_name_prefixed + ': ' + item.title)
+				.setDescription('Score: ' + item.score + '\n' + item.link_flair_text)
+				.setURL('https://old.reddit.com' + item.permalink)
+				.setFooter('Courtesy of u/' + item.author.name);
+			message.channel.send(embed);
+		}
+		else {
+			message.reply('Please give a proper subreddit name to use this command');
+		}
+	}
 });
 
 function getDate(start, end) {
@@ -272,6 +309,13 @@ function getUserFromMention(mention) {
 
 		return client.users.cache.get(mention);
 	}
+}
+
+// Stack Overflow
+function getRandomInt(min, max) {
+	min = Math.ceil(min);
+	max = Math.floor(max);
+	return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
 // login to Discord with your app's token

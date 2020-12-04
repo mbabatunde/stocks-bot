@@ -16,6 +16,7 @@
     "eslint": "^7.14.0",
     "finnhub": "^1.2.1",
     "node-fetch": "^2.6.1",
+    "snoowrap": "^1.21.0",
     "stocks.js": "^0.0.19"
   }
 }
