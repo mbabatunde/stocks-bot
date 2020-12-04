@@ -64,7 +64,7 @@ client.on('message', async (message) => {
 		else {
 			// TODO: handle various arguments
 			// for basic stocks information
-			let ticker = args[0];
+			const ticker = args[0].toUpperCase();
 
 			// const result = await stocks.timeSeries({
 			// 	symbol: ticker,
@@ -116,7 +116,6 @@ client.on('message', async (message) => {
 								current = thousands_separators(current);
 								prev = thousands_separators(prev);
 
-								ticker = ticker.toUpperCase();
 								const embed = new Discord.MessageEmbed()
 									.setColor('#D3D3D3')
 									.setTitle(`$${ticker} Info`)
