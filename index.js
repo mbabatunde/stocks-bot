@@ -270,7 +270,7 @@ client.on('message', async (message) => {
 				item.link_flair_text = 'No link flair for this post';
 			}
 			const embed = new Discord.MessageEmbed()
-				.setColor('#008F70')
+				.setColor('#06B253')
 				.setImage(item.url_overridden_by_dest)
 				.setTitle(item.subreddit_name_prefixed + ': ' + item.title)
 				.setDescription('Score: ' + item.score + '\n' + item.link_flair_text)
