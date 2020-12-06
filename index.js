@@ -256,7 +256,12 @@ client.on('message', async (message) => {
 		const sub = args[0];
 		const topRes = await r.getSubreddit(sub).getTop({ time: 'day' });
 		if (topRes) {
-			const randomNumber = getRandomInt(0, 24);
+			// issue with surrealmemes subreddit
+			// TODO: investigate other subreddits
+			let randomNumber = getRandomInt(0, 24);
+			if (sub === 'surrealmemes') {
+				randomNumber = getRandomInt(0, 4);
+			}
 			const item = topRes[randomNumber];
 			console.log(item.permalink);
 			console.log(item.author.name);
