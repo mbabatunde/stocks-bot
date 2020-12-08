@@ -99,6 +99,12 @@ client.on('message', async (message) => {
 					let prev = Number(JSON.parse(response.text).pc).toFixed(2);
 					const percentage = stockPercentage(current, prev);
 
+					const testURL = 'https://api.iextrading.com/1.0/ref-data/symbols';
+					// this is returning all symbols on common stocks
+					// need to create a search algorithm to quickly find the correct symbol
+					// fetch(testURL).then(resp => resp.json()).then(json => {
+					// 	console.log(json);
+					// });
 					const url = `https://cloud.iexapis.com/v1/stock/${ticker}/logo?token=${process.env.IEX}`;
 					fetch(url, {
 						headers: {
