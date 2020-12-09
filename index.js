@@ -294,7 +294,8 @@ client.on('message', async (message) => {
 		else {
 			message.reply('Please give a proper subreddit name to use this command');
 		}
-	} else if (command === 'news') {
+	}
+	else if (command === 'news') {
 		// eslint-disable-next-line prefer-const
 		let orgs = 'bbc-news, bloomberg, the-wall-street-journal';
 		if (args[0]) {
@@ -316,7 +317,7 @@ client.on('message', async (message) => {
 			articles.forEach((entry, i) => {
 				const index = i + 1;
 				const title = index + '.) ' + entry.title;
-				embed.addFields({ name: title, value: entry.url });
+				embed.addFields({ name: `**${title}**`, value: entry.url });
 			});
 			message.channel.send(embed);
 		});
