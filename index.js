@@ -39,16 +39,17 @@ const newsapi = new NewsAPI(process.env.NEWS);
 // Mapping of news
 const organizations = {
 	'WSJ': 'the-wall-street-journal',
-	'WALL STREET JOURNAL': 'the-wall-street-journal',
+	'WALLSTREETJOURNAL': 'the-wall-street-journal',
 	'BBC': 'bbc-news',
-	'BBC NEWS': 'bbc-news',
+	'BBCNEWS': 'bbc-news',
 	'AP': 'associated-press',
-	'ASSOCIATED PRESS': 'associated-press',
-	'ARS TECHNICA': 'ars-technica',
+	'ASSOCIATEDPRESS': 'associated-press',
+	'ARSTECHNICA': 'ars-technica',
 	'TIME': 'time',
-	'IRISH TIMES': 'the-irish-times',
-	'THE IRISH TIMES': 'the-irish-times',
-	'NATIONAL GEOGRAPHIC': 'national-geographic',
+	'IRISHTIMES': 'the-irish-times',
+	'THEIRISHTIMES': 'the-irish-times',
+	'NATIONALGEOGRAPHIC': 'national-geographic',
+	'NATGEO': 'national-geographic',
 };
 
 // when the client is ready, run this code
@@ -66,6 +67,8 @@ client.on('message', async (message) => {
 	// eslint-disable-next-line quotes
 	if (command === `stonks`) {
 		if (!args.length || args[0] === '-h' || args[0] === '-help') {
+			console.log(Object.keys(organizations).join(', ').trim().toLocaleLowerCase());
+			const allSources = Object.keys(organizations).join(', ').trim().toLocaleLowerCase();
 			const embed = new Discord.MessageEmbed()
 				.setTitle('Welcome to the Stonks Bot!')
 				.setDescription('This bot will give you some information about a stock, some memes, and more!')
@@ -78,7 +81,8 @@ client.on('message', async (message) => {
 					{ name: '`!smbc`', value: 'Shows a random SMBC comic' },
 					{ name: '`!reddit <SUBREDDIT>`', value: 'Gives a random top 25 post from a particular subreddit (dankmemes, funny, prequelmemes, etc.)' },
 					{ name: '`!wsb` ', value: 'WSB reminder' },
-					{ name: '`!news`', value: 'Shows the top 10 trending news articles from various sources' }
+					{ name: '`!news`', value: 'Shows the top 10 trending news articles from various sources' },
+					{ name: '`!news -source=<SOURCE>`', value: `Shows the top 10 trending news articles from said source\n\n**Sources you can pass:**  ${allSources}` },
 				);
 			message.channel.send(embed);
 		}
@@ -317,6 +321,7 @@ client.on('message', async (message) => {
 			// eslint-disable-next-line no-shadow
 			// orgs = args[0].toLocaleLowerCase();
 			if (args[0].includes('-source=')) {
+				// console.log(args[0].split(/[\s=]+/));
 				orgs = args[0].split('=')[1].toUpperCase();
 				console.log(orgs);
 				if (orgs in organizations) {
