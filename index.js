@@ -36,6 +36,20 @@ const r = new snoowrap({
 // News API
 const newsapi = new NewsAPI(process.env.NEWS);
 
+// Mapping of news
+const organizations = {
+	'WSJ': 'the-wall-street-journal',
+	'WALL STREET JOURNAL': 'the-wall-street-journal',
+	'BBC': 'bbc-news',
+	'BBC NEWS': 'bbc-news',
+	'AP': 'associated-press',
+	'ASSOCIATED PRESS': 'associated-press',
+	'ARS TECHNICA': 'ars-technica',
+	'TIME': 'time',
+	'IRISH TIMES': 'the-irish-times',
+	'THE IRISH TIMES': 'the-irish-times',
+	'NATIONAL GEOGRAPHIC': 'national-geographic',
+};
 
 // when the client is ready, run this code
 // this event will only trigger one time after logging in
@@ -298,17 +312,32 @@ client.on('message', async (message) => {
 	else if (command === 'news') {
 		// eslint-disable-next-line prefer-const
 		let orgs = 'bbc-news, bloomberg, the-wall-street-journal';
+		console.log(args.length);
 		if (args[0]) {
 			// eslint-disable-next-line no-shadow
-			const orgs = args[0].toLocaleLowerCase();
-			console.log(orgs);
+			// orgs = args[0].toLocaleLowerCase();
+			if (args[0].includes('-source=')) {
+				orgs = args[0].split('=')[1].toUpperCase();
+				console.log(orgs);
+				if (orgs in organizations) {
+					orgs = organizations[orgs];
+				}
+				else {
+					message.channel.send('Misspelled or incorrect mapping on the organization');
+					return;
+				}
+			}
+			else {
+				message.channel.send('Please use the `-news=` flag within your `!news` argument');
+			}
 		}
+
 		newsapi.v2.topHeadlines({
 			sources: orgs,
 		}, {
 			noCache: true,
 		}).then(resp => {
-			console.log(resp);
+			// console.log(resp);
 			const articles = resp.articles.slice(0, 10);
 			const embed = new Discord.MessageEmbed()
 				.setColor('#996E3E')
@@ -317,7 +346,7 @@ client.on('message', async (message) => {
 			articles.forEach((entry, i) => {
 				const index = i + 1;
 				const title = index + '.) ' + entry.title;
-				console.log('source: ' + JSON.stringify(entry.source.name));
+				// console.log('source: ' + JSON.stringify(entry.source.name));
 				const articleSource = JSON.stringify(entry.source.name).replace('"', '').replace('"', '');
 				embed.addFields({ name: `**${title}**`, value: `[${articleSource} Link](${entry.url})` });
 			});
