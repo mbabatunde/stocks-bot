@@ -8,6 +8,8 @@ const finnhub = require('finnhub');
 const Stocks = require('stocks.js');
 const algotrader = require('algotrader');
 const snoowrap = require('snoowrap');
+const NewsAPI = require('newsapi');
+const { default: News } = require('finnhub/dist/model/News');
 
 // create a new Discord client
 const client = new Discord.Client();
@@ -30,6 +32,10 @@ const r = new snoowrap({
 	username: process.env.REDDITUSERNAME,
 	password: process.env.REDDITPASSWORD,
 });
+
+// News API
+const newsapi = new NewsAPI(process.env.NEWS);
+
 
 // when the client is ready, run this code
 // this event will only trigger one time after logging in
@@ -58,6 +64,7 @@ client.on('message', async (message) => {
 					{ name: '`!smbc`', value: 'Shows a random SMBC comic' },
 					{ name: '`!reddit <SUBREDDIT>`', value: 'Gives a random top 25 post from a particular subreddit (dankmemes, funny, prequelmemes, etc.)' },
 					{ name: '`!wsb` ', value: 'WSB reminder' },
+					{ name: '`!news`', value: 'Shows the top 10 trending news articles from various sources' }
 				);
 			message.channel.send(embed);
 		}
@@ -287,6 +294,32 @@ client.on('message', async (message) => {
 		else {
 			message.reply('Please give a proper subreddit name to use this command');
 		}
+	} else if (command === 'news') {
+		// eslint-disable-next-line prefer-const
+		let orgs = 'bbc-news, bloomberg, the-wall-street-journal';
+		if (args[0]) {
+			// eslint-disable-next-line no-shadow
+			const orgs = args[0].toLocaleLowerCase();
+			console.log(orgs);
+		}
+		newsapi.v2.topHeadlines({
+			sources: orgs,
+		}, {
+			noCache: true,
+		}).then(resp => {
+			console.log(resp);
+			const articles = resp.articles.slice(0, 10);
+			const embed = new Discord.MessageEmbed()
+				.setColor('#996E3E')
+				.setTitle('News for Today')
+				.setFooter('From News API: https://newsapi.org/');
+			articles.forEach((entry, i) => {
+				const index = i + 1;
+				const title = index + '.) ' + entry.title;
+				embed.addFields({ name: title, value: entry.url });
+			});
+			message.channel.send(embed);
+		});
 	}
 });
 
