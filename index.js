@@ -317,7 +317,9 @@ client.on('message', async (message) => {
 			articles.forEach((entry, i) => {
 				const index = i + 1;
 				const title = index + '.) ' + entry.title;
-				embed.addFields({ name: `**${title}**`, value: entry.url });
+				console.log('source: ' + JSON.stringify(entry.source.name));
+				const articleSource = JSON.stringify(entry.source.name).replace('"', '').replace('"', '');
+				embed.addFields({ name: `**${title}**`, value: `[${articleSource} Link](${entry.url})` });
 			});
 			message.channel.send(embed);
 		});
