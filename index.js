@@ -333,8 +333,7 @@ client.on('message', async (message) => {
 				}
 			}
 			else if (args[0] === 'sources') {
-				console.log(Object.keys(organizations));
-				message.channel.send('Sources:\n' + `**${Object.keys(organizations).join(', ').trim().toLocaleLowerCase()}**`);
+				message.channel.send('Current Sources:\n' + `-**${Object.keys(organizations).join('\n-').trim().toLocaleLowerCase()}**`);
 				return;
 			}
 			else {
