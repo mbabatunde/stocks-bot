@@ -332,6 +332,11 @@ client.on('message', async (message) => {
 					return;
 				}
 			}
+			else if (args[0] === 'sources') {
+				console.log(Object.keys(organizations));
+				message.channel.send('Sources:\n' + `**${Object.keys(organizations).join(', ').trim().toLocaleLowerCase()}**`);
+				return;
+			}
 			else {
 				message.channel.send('Please use the `-news=` flag within your `!news` argument');
 			}
@@ -353,7 +358,7 @@ client.on('message', async (message) => {
 				const title = index + '.) ' + entry.title;
 				// console.log('source: ' + JSON.stringify(entry.source.name));
 				const articleSource = JSON.stringify(entry.source.name).replace('"', '').replace('"', '');
-				embed.addFields({ name: `**${title}**`, value: `[${articleSource} Link](${entry.url})` });
+				embed.addFields({ name: `${title}`, value: `[${articleSource} Link](${entry.url})` });
 			});
 			message.channel.send(embed);
 		});
@@ -373,8 +378,9 @@ function thousands_separators(num) {
 
 function stockPercentage(closed, prev) {
 	// Check for IPO
-	if (closed === 0) {
-		return 'IPO';
+	console.log(prev);
+	if (prev == 0.00) {
+		return '🎊 IPO';
 	}
 	const change = Number(((closed - prev) / prev) * 100).toFixed(2);
 	return change < 0 ? `📉 ${change}%` : `📈 +${change}%`;
