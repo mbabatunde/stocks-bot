@@ -372,6 +372,10 @@ function thousands_separators(num) {
 }
 
 function stockPercentage(closed, prev) {
+	// Check for IPO
+	if (closed === 0) {
+		return 'IPO';
+	}
 	const change = Number(((closed - prev) / prev) * 100).toFixed(2);
 	return change < 0 ? `📉 ${change}%` : `📈 +${change}%`;
 }
