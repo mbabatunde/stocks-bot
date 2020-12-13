@@ -52,8 +52,6 @@ const organizations = {
 	'NATGEO': 'national-geographic',
 };
 
-// when the client is ready, run this code
-// this event will only trigger one time after logging in
 client.once('ready', () => {
 	console.log('ready!');
 	client.user.setActivity('$PLTR 🚀🌕', { type: 'WATCHING' });
@@ -90,28 +88,6 @@ client.on('message', async (message) => {
 			// TODO: handle various arguments
 			// for basic stocks information
 			const ticker = args[0].toUpperCase();
-
-			// const result = await stocks.timeSeries({
-			// 	symbol: ticker,
-			// 	interval: '1min',
-			// 	amount: 1,
-			// });
-
-			// // eslint-disable-next-line no-unused-vars
-			// const history = result.forEach(item => {
-			// 	// console.log(item.open);
-			// 	// console.log(item.close);
-			// 	// console.log(item.high);
-			// });
-
-			// const open = Number(result[0].open).toFixed(2);
-			// const close = Number(result[0].close).toFixed(2);
-			// const high = Number(result[0].high).toFixed(2);
-			// const low = Number(result[0].low).toFixed(2);
-
-			// console.log(typeof (open));
-
-			// message.reply(`$${ticker} Trading Info:\nOpening for $${ticker}: \`$${open}\`\nClosing for $${ticker}: \`$${close}\`\nHigh for $${ticker}: \`$${high}\`\nLow for $${ticker}:\`$${low}\``);
 
 			// TODO: Investigate this API further
 			finnhubClient.quote(ticker, (error, data, response) => {
@@ -153,8 +129,6 @@ client.on('message', async (message) => {
 								// .attachFiles(['./stonks.jpg'])
 									.setThumbnail(imageURL)
 									.addFields(
-										// { name: 'Price Info', value: '**Current:**\nOpened:\nHigh:\nLow:\n', inline: true },
-										// { name: 'Description', value: `\`$${current}\`\n\`$${open}\`\n\`$${high}\`\n\`$${low}\``, inline: true },
 										// eslint-disable-next-line quotes
 										{ name: `__Current__`, value: `**$${current}**`, inline: true },
 										// eslint-disable-next-line quotes
@@ -319,7 +293,6 @@ client.on('message', async (message) => {
 		console.log(args.length);
 		if (args[0]) {
 			// eslint-disable-next-line no-shadow
-			// orgs = args[0].toLocaleLowerCase();
 			if (args[0].includes('-source=')) {
 				// console.log(args[0].split(/[\s=]+/));
 				orgs = args[0].split('=')[1].toUpperCase();
